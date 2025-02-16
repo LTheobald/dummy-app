@@ -1,0 +1,13 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+    pre_build:
+      commands:
+        - mvn clean install
+        - aws ecr get-login-password | docker login --username AWS --password-stdin ${ecrRepo.repositoryUrl}
+      build:
+        commands:
+          - docker build -t ${ecrRepo.repositoryUrl}:latest .
+          - docker push ${ecrRepo.repositoryUrl}:latest
